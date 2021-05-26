@@ -26,15 +26,15 @@ pos.dist = c("Balaka", "Chikwawa", "Dedza", "Dowa", "Karonga", "Kasungu", "Mchin
              "Rumphi", "Salima")
 
 ## First create dat.venue
-dat.venue = matrix(rnorm(3013 * 154), nrow = 3013, ncol = 154)
+dat.venue = matrix(rnorm(2541 * 154), nrow = 2541, ncol = 154)
 dat.venue = as.data.frame(dat.venue)
 names(dat.venue) = venue.names
-dat.venue$b5a.y = sample(venue.dist, size = 3013, replace = T)
-dat.venue$fswestimate = rbinom(3013, 1, prob = plogis(dat.venue$mv201 + dat.venue$built +
-                                  dat.venue$travel + dat.venue$worldPop +
+dat.venue$b5a.y = sample(venue.dist, size = 2541, replace = T)
+dat.venue$fswestimate = rbinom(2541, 1, prob = plogis(dat.venue$mv201 + dat.venue$built +
+                                  dat.venue$worldPop +
                                     dat.venue$nightlight)) *
-                        round(rlnorm(3013, meanlog = 1 + 0.1 * dat.venue$mv167 + 0.1 * dat.venue$hivpos +
-                                  0.1 * dat.venue$worldPop + 0.1 * dat.venue$nightlight))
+                        round(rlnorm(2541, meanlog = exp(-1 + 0.1 * dat.venue$mv167 + 0.1 * dat.venue$hivpos +
+                                  0.1 * dat.venue$worldPop + 0.1 * dat.venue$nightlight)))
 venue.loc.sample = sample(1:nrow(cell.coords), nrow(dat.venue))
 dat.venue$Longitude = cell.coords$x[venue.loc.sample]
 dat.venue$Latitude = cell.coords$y[venue.loc.sample]
@@ -51,10 +51,10 @@ dat.cell$District = sample(districts, size = 39312, replace = T)
 dat.cell$worldPop[4:5] = 0
 dat.cell$nightlight[8:9] = 0
 
-dat.cell$numplace = rbinom(39312, 1, prob = plogis(-8 + dat.cell$mv201 + 
-                 dat.cell$worldPop + dat.cell$nightlight)) *
-  round(rnbinom(39312, mu = 1 + 0.1 * dat.cell$v155 + 0.1 * dat.cell$built +
-                 0.1 * dat.cell$worldPop + 0.1 * dat.cell$nightlight, size = 1))
+dat.cell$numplace = rbinom(39312, 1, prob = plogis(-6.5 + dat.cell$mv167 + 
+                 dat.cell$v155 + dat.cell$built + dat.cell$worldPop + dat.cell$nightlight)) *
+  round(rnbinom(39312, mu = exp(-1 + 0.1 * dat.cell$v155 + 1 * dat.cell$built +
+                 0.5 * dat.cell$worldPop), size = 1))
 
 dat.cell$numplace[!(dat.cell$District %in% pos.dist)] = 0
 
@@ -64,6 +64,4 @@ dat.cell$y = cell.coords$y
 
 saveRDS(dat.venue, file = "Malawi_Venues_nightlight_sim.rds")
 saveRDS(dat.cell, file = "Malawi_Cells_worldPop_sim.rds")
-
-
 

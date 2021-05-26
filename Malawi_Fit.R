@@ -18,7 +18,6 @@ dat.venue$District = as.character(dat.venue$b5a.y)
 dat.venue$District[dat.venue$District == "Chikhwawa"] = "Chikwawa"
 
 dat.venue = dat.venue[,c(3,4,103,111:155)]
-dat.venue$fswestimate[dat.venue$fswestimate > 100] = 100
 
 
 ## Now transform the worldPop and nightlight values
